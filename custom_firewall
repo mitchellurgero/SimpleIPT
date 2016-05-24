@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#########################################################################
+##############BASIC IPTABLES FIREWALL SCRIPT W/ EASY CONFIG##############
+#########################################################################
+## NOTICE: This script does not flush iptables incase you have stuff in there (Like XenHosts, Email servers etc)
+
+#################################
+# How To Edit the Ports to open #
+#################################
+# Edit the portNumbers array by adding (Or removing) array items, space delimited.
+# Then edit the eth device you want the port to be open on.
+
+
+## Variables to edit
+portNumbers=('22' '3389');
+ethDevice="xenbr0"
+
+
+###### BEGIN SCRIPT ######
+## Set lo device (loopback)
+iptables -A INPUT -i lo -j ACCEPT
+
+### Basic Port scan protection and DDoS/DoS protection (Somewhat?)
+iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+
+
+## Now open the ports for the firewall script via the array.
+for i in "${portNumbers[@]}"
+do
+echo "Open port: $i on $ethDevice"
+iptables -A INPUT -i $ethDevice -p tcp --dport $i -m state --state NEW,ESTABLISHED -j ACCEPT
+# iptables -A OUTPUT -o $ethDevice -p tcp --dport $i -m state --state ESTABLISHED -j ACCEPT
+done
+
+# Set INPUT/OUTPUT to DROP/ACCEPT 
+iptables -P OUTPUT ACCEPT
+iptables -P INPUT DROP
