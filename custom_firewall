@@ -35,6 +35,9 @@ iptables -A INPUT -i $ethDevice -p tcp --dport $i -m state --state NEW,ESTABLISH
 # iptables -A OUTPUT -o $ethDevice -p tcp --dport $i -m state --state ESTABLISHED -j ACCEPT
 done
 
+## Allow related and established connections to communicate on other ports if needed (Example ssh'ing out of host to a machine will fail without this. Same with ping.)
+iptables -A INPUT -i $ethDevice -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 # Set INPUT/OUTPUT to DROP/ACCEPT 
 iptables -P OUTPUT ACCEPT
 iptables -P INPUT DROP
