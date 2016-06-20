@@ -21,10 +21,12 @@ ethDevice="xenbr0"
 ## Set lo device (loopback)
 iptables -A INPUT -i lo -j ACCEPT
 
+
+### Maybe do not need these for such a basic script?
 ### Basic Port scan protection and DDoS/DoS protection (Somewhat?)
-iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
-iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
-iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+#iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+#iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+#iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
 
 
 ## Now open the ports for the firewall script via the array.
